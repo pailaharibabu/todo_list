@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo list</title>
+    <style>
+        .striked{
+            text-decoration:line-through;
+        }
+    </style>
+    <script type="text/javascript">
+        var tasks = [{
+                  id: 1,
+                  todo: 'test1',
+                  status: 0
+                  }];
+        var count = tasks.length;
+        var currentEditID = -1;
+
+        // createTodoListInHTML()
+
+
+        setTimeout(createTodoListInHTML,100)
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id != id);
+            createTodoListInHTML();
+        }
+
+        function AddTextToEditTextBox(taskID){
+            
+            var todoEditBox = document.getElementById('todoEdit');
+            var task;
+            tasks = tasks.map(t => {
+                if(t.taskID === taskID) {
+                    task = tasks[taskID-1].todo;
+                }
+                return t;
+            });
+
+            // var task = tasks[taskID-1].todo;
+            //add value to the box
+            todoEditBox.value = task;
+            currentEditID = taskID;
+
+            
+            createTodoListInHTML();
+        }
+
+        function doneTodo(id) {
+            tasks = tasks.map(t => {
+                if(t.id === id) {
+                    if(t.status === 1){
+                        t.status = 0;
+                    }else {
+                        t.status = 1;
+                    }
+                }
+                return t;
+            })
+            createTodoListInHTML();
+        }
+        function saveEditedTask(){
+            var todoEditBox = document.getElementById('todoEdit').value;
+            tasks[currentEditID-1].todo = todoEditBox;
+            createTodoListInHTML();
+            //empty the box now
+            // reset the edit variable
+        }
+
+        function createTodoListInHTML() {
+            //get element where you want to create the list
+            var todo_list = document.getElementById('todo_list');
+            console.log(todo_list)
+            //empty the existing html
+            todo_list.innerHTML = "";
+            //for loop through the list of tasks, and create a html row
+            // for every item in the list
+            tasks.forEach(function(task){
+                if(task.status === 0){
+                      todo_list.innerHTML += "<p><input onchange='doneTodo(" + task.id +  ")' type='checkbox'> " +
+                          task.todo +
+                          " <a href='#' onclick='deleteTask(" + task.id + ")'>Delete</a> <button href='#' onclick='AddTextToEditTextBox(" + task.id + ")'>Edit</button></p>";
+                }else {
+                    
+                      todo_list.innerHTML += "<p class = 'striked'><input checked = 'true' onchange='doneTodo(" + task.id +  ")' type='checkbox'> " +
+                          task.todo +
+                          " <a href='#' onclick='deleteTask(" + task.id + ")'>Delete</a> <button href='#' onclick='AddTextToEditTextBox(" + task.id + ")'>Edit</button></p>";
+                }
+               
+            })
+        }
+
+        function addTodo() {
+            
+            var todo = document.getElementById('todo').value;
+            if(todo != ''){
+                  tasks.push({
+                  id: count+=1,
+                  todo: todo,
+                  status: 0
+                  });
+                  createTodoListInHTML();
+                  document.getElementById('todo').value = "";
+            }else {
+                alert('cant have empty todo');
+            }
+          
+        }
+    </script>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_SharedWithUsers msdt:dt="string">June27 Team Members</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_SharedWithUsers>
+<mso:SharedWithUsers msdt:dt="string">7;#June27 Team Members</mso:SharedWithUsers>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+
+<body>
+   
+    <input type="text" id="todo" placeholder="add todo list here">
+    <button onclick="addTodo()">Add</button>
+    <input type="text" id="todoEdit" placeholder="edit todo list here">
+    <button onclick="saveEditedTask()">Save</button>
+
+    <div id="todo_list">
+        <!-- <p class = "striked">Task1 <a href = "#">Delete</a></p> -->
+    </div>
+</body>
+
+</html>
+
+
+
